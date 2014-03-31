@@ -3,7 +3,7 @@ Capybara Cheatsheet
 
 Actions
 -------
-Actions can be run bare (as shown here), from a session, or from a node. (I think.)
+Actions can be run bare (as shown here), from `page`, or from a session. The click interactions and form interactions can also be run from a node.
 
 ``` ruby
 visit '/path'
@@ -21,6 +21,9 @@ uncheck 'Checkbox'                                # The check box can be found v
 attach_file 'File Field', '/path/to/file.ext'     # The file field can be found via its name, id or label text.
 select 'Option', :from => 'Select Box'            # The select box can be found via its name, id or label text. Specifying :from is optional -- default searches all select boxes.
 unselect 'Option', :from => 'Select Box'          # The select box can be found via its name, id or label text. Specifying :from is optional -- default searches all select boxes.
+
+save_screenshot 'filename.jpg'                    # Save JPEG of current page.
+save_and_open_page                                # Save JPEG of current page and open in default browser.
 ```
 
 Scoping
