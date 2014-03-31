@@ -15,6 +15,7 @@ click_on 'Link or Button'                         # Finds a button or link, as a
 
 fill_in 'Input Field', :with => 'content'         # The field can be found via its name, id or label text. Field can be a text or password INPUT field, or a TEXTAREA.
 choose 'Radio Button'                             # The radio button can be found via name, id or label text.
+choose 'radio_group', option: Radio Button'       # The radio button group can be found by name or id.
 check 'Checkbox'                                  # The check box can be found via name, id or label text.
 uncheck 'Checkbox'                                # The check box can be found via name, id or label text.
 attach_file 'File Field', '/path/to/file.ext'     # The file field can be found via its name, id or label text.
