@@ -71,6 +71,11 @@ Package Installation
     apt:
       name: openssl-devel
 ~~~
+* Install a DEB (Debian) package from a URL:
+~~~ yaml
+    apt:
+      deb: https://example.com/python-ppq_0.1-1_all.deb
+~~~
 
 
 Files
