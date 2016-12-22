@@ -41,6 +41,7 @@ General
     args:
       creates: /file/to/create
 ~~~
+    * You may have wildcards in the path, as of Ansible 2.0
 * Use `chdir` to change directories before running a command:
 ~~~ yaml
     command: command_to_run
