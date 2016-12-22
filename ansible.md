@@ -48,6 +48,21 @@ General
     args:
       chdir: /path/to/run/in
 ~~~
+* To determine if a condition already exists, use this pattern:
+~~~ yaml
+    - name: Determine xyz
+      command: xyz --list
+      register: xyz
+      changed_when: FALSE
+      ignore_errors: TRUE
+    - name: Xyz
+      command: xyz --install {{ item }}
+      when: item not in xyz.stdout or xyz.stdout.startswith(item) or xyz.rc != 0
+      with_items:
+        - abc
+        - def
+~~~
+    * This is a good way to ensure idempotency
 
 
 Package Installation
