@@ -4,11 +4,22 @@ Ansible Cheatsheet
 General
 -------
 
+* List all available modules:
+~~~ shell
+ansible-doc -l
+~~~
+* To avoid being prompted to verify SSH signatures:
+    * Run with environment variable `ANSIBLE_HOST_KEY_CHECKING=False` set
+    * Or set `host_key_checking = False` in `[defaults]` of `~/.ansible.cfg`
+    * Would not recommend this for PROD environments, but good for Vagrant
 * Including other files:
 ~~~ yaml
     - include: other.yml
       tags: other
 ~~~
+* Tags - every task should probably have a tag
+    * Either at the task level, or at the include or dependencies level
+    * Makes it easier to run a subset with `-t tag_name`
 * Use a more YAML-like format, placing each option on a separate line:
 ~~~ yaml
     - name: Copy file
@@ -16,7 +27,7 @@ General
         src: /tmp/resolv.conf
         dest: /etc/resolv.conf
 ~~~
-* Use `block` to run several sub-tasks within a task:
+* Use `block` to run several sub-tasks within a task (but you should probably use multiple tasks or `with_items`):
 ~~~ yaml
     - name: Do some things
       block:
@@ -25,7 +36,6 @@ General
         - command: /bin/true
         - command: /bin/false
 ~~~
-    * But you should probably use multiple tasks or `with_items`
 * If you want a file to be owned by a user, it's easiest to use `become_user`
 ~~~ yaml
     - name: Download Craig's config files
@@ -39,22 +49,22 @@ General
 ~~~ yaml
     command: command_to_run
     args:
-      creates: /file/to/create
+      creates: /file/to/create  # May include wildcards, as of Ansible 2.0
 ~~~
-    * You may have wildcards in the path, as of Ansible 2.0
 * Use `chdir` to change directories before running a command:
 ~~~ yaml
     command: command_to_run
     args:
       chdir: /path/to/run/in
 ~~~
-* To determine if a condition already exists, use this pattern:
+* To determine if a condition already exists, use this pattern (this is a good way to ensure idempotency):
 ~~~ yaml
     - name: Determine xyz
       command: xyz --list
       register: xyz
       changed_when: FALSE
       ignore_errors: TRUE
+
     - name: Xyz
       command: xyz --install {{ item }}
       when: item not in xyz.stdout or xyz.stdout.startswith(item) or xyz.rc != 0
@@ -62,7 +72,8 @@ General
         - abc
         - def
 ~~~
-    * This is a good way to ensure idempotency
+* To not log output for a task (like if it has passwords/secrets):
+    * On top-level of task: `no_log: true`
 
 
 Package Installation
@@ -86,7 +97,39 @@ Package Installation
 * Install an APT (Debian) package:
 ~~~ yaml
     apt:
-      name: openssl-devel
+      name:
+        - openssl
+        - openssl-devel
+~~~
+* Install an APT (Debian) package from a URL:
+~~~ yaml
+    apt:
+      deb: https://example.com/python-ppq_0.1-1_all.deb
+~~~
+* Add a YUM repo:
+~~~ yaml
+    yum_repository:
+      name: epel
+      description: EPEL YUM repo
+      baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+      gpgkey: https://getfedora.org/static/352C64E5.txt
+      gpgcheck: yes
+    when: ansible_pkg_mgr == "yum"
+~~~
+* Install an RPM package (via YUM):
+~~~ yaml
+    yum:
+      state: installed
+      name:
+        - curl
+        - httpie
+    when: ansible_pkg_mgr == "yum"
+~~~
+* Install an RPM package (via YUM) from a URL:
+~~~ yaml
+    yum:
+      state: installed
+      name: http://nginx.org/packages/centos/6/noarch/RPMS/nginx-release-centos-6-0.el6.ngx.noarch.rpm
 ~~~
 * Install a DEB (Debian) package from a URL:
 ~~~ yaml
@@ -101,15 +144,17 @@ Files
 * Create a directory:
 ~~~ yaml
     file:
-      path: /path/to/directory
+      path:
+        - /path/to
+        - /path/to/directory
       state: directory
-      mode: 0700
+      mode: 0755
 ~~~
 * Create a soft link:
 ~~~ yaml
     file:
       src: /existing/file
-      dest: /file/to/create/as/a/link/to/existing/file
+      dest: /file/to/create/as/a/link/to/existing/file  # Can use `path` instead of `dest`.
       state: link
       force: yes
 ~~~
@@ -122,6 +167,12 @@ Files
       owner: postgresql
       group: postgresql
 ~~~
+* Download a file from the Internet to the target system:
+~~~ yaml
+    get_url:
+      url: http://exmaple.com/blah
+      dest: /path/to/destination
+~~~
 * Add a line to a file:
 ~~~ yaml
       lineinfile:
@@ -130,22 +181,23 @@ Files
         regexp: '^#?key=' # Replace last occurrence that matches this regular expression.
         validate: 'visudo -cf %s' # Run this command; if it fails, don't overwrite the file.
 ~~~
+* Delete a file:
+~~~ yaml
+    file:
+      path: /path/to/file
+      state: absent
+~~~
 
 
 Services
 --------
 
-* Start a service:
+* Start and enable a service (you should almost always start and enable the service in a single task):
 ~~~ yaml
     service:
       name: httpd
-      state: started
-~~~
-* Ensure a service starts on boot:
-~~~ yaml
-    service:
-      name: httpd
-      enabled: true
+      state: started  # Or `restarted` if you need it to restart if it was already running.
+      enabled: true  # DON'T FORGET THIS, OR YOUR SERVICE MIGHT NOT RUN AFTER REBOOTING.
 ~~~
 
 
