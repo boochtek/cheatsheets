@@ -25,6 +25,7 @@ General
         - command: /bin/true
         - command: /bin/false
 ~~~
+    * But you should probably use multiple tasks or `with_items`
 * If you want a file to be owned by a user, it's easiest to use `become_user`
 ~~~ yaml
     - name: Download Craig's config files
