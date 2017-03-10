@@ -194,6 +194,13 @@ Files
       path: /path/to/file
       state: absent
 ~~~
+* Clone a git repository:
+~~~ yaml
+    git:
+      dest: /usr/local/share/cheatsheets
+      repo: https://github.com/boochtek/cheatsheets.git
+    become_user: booch
+~~~
 
 
 Services
