@@ -167,6 +167,13 @@ Files
       owner: postgresql
       group: postgresql
 ~~~
+* Copy a file from one place to another on the target system:
+~~~ yaml
+    copy:
+      src: /path/to/original/file_or_directory
+      dest: /path/to/file/file_or_directory_to_create
+      remote_src: TRUE
+~~~
 * Download a file from the Internet to the target system:
 ~~~ yaml
     get_url:
