@@ -12,6 +12,10 @@ ansible-doc -l
     * Run with environment variable `ANSIBLE_HOST_KEY_CHECKING=False` set
     * Or set `host_key_checking = False` in `[defaults]` of `~/.ansible.cfg`
     * Would not recommend this for PROD environments, but good for Vagrant
+* Run against a single target machine (but use inventory to set variables):
+~~~ shell
+ansible-playbook --limit machine_to_run_on playbook.yml
+~~~
 * Including other files:
 ~~~ yaml
     - include: other.yml
