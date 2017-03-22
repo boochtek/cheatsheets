@@ -31,6 +31,15 @@ ansible-playbook --limit machine_to_run_on playbook.yml
         src: /tmp/resolv.conf
         dest: /etc/resolv.conf
 ~~~
+* To disable logging of a task:
+~~~ yaml
+    - name: Secret stuff
+      command: "echo {{secret_root_password}} | sudo su -"
+      no_log: true
+~~~
+    * It will hide any output
+    * It will hide any commands that would be printed if you're using `-v`
+    * It will print `censored due to no_log`
 * Use `block` to run several sub-tasks within a task (but you should probably use multiple tasks or `with_items`):
 ~~~ yaml
     - name: Do some things
