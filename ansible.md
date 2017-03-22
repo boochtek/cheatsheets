@@ -48,7 +48,10 @@ ansible-playbook --limit machine_to_run_on playbook.yml
         repo: https://github.com/booch/config_files.git
       become_user: booch
 ~~~
-* Use `command` if possible, but use `shell` if using interpolation, pipes, or chained commands.
+* Avoid `command` and `shell`, if possible
+    * Use a more appropriate module, if available
+    * Of the 2, prefer `command`, if it will work for you
+    * Use `shell` if you need shell functionality, like interpolation, pipes, or chained commands
 * Use `creates` to run a command only if a file does not exist already:
 ~~~ yaml
     command: command_to_run
