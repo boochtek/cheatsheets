@@ -152,6 +152,14 @@ Package Installation
     apt:
       deb: https://example.com/python-ppq_0.1-1_all.deb
 ~~~
+* Download and unpack a ZIP file:
+~~~ yaml
+    unarchive:
+      src: https://example.com/example.zip
+      dest: /usr/local/bin
+      remote_src: TRUE
+~~~
+    * Can also unpack `tar.gz`, `.tar.bz2`, and `.tgz` files
 
 
 Files
