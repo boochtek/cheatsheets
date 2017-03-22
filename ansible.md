@@ -88,8 +88,18 @@ ansible-playbook --limit machine_to_run_on playbook.yml
         - abc
         - def
 ~~~
-* To not log output for a task (like if it has passwords/secrets):
+* To suppress log output for a task (like if it has passwords/secrets):
     * On top-level of task: `no_log: true`
+* Waiting for something:
+~~~ yaml
+    - name: Wait for Jenkins to start up before proceeding
+      shell: curl -D - --silent http://{{ jenkins_hostname }}:{{ jenkins_http_port }}{{ jenkins_url_prefix }}/cli/
+      register: result
+      until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+      retries: 60
+      delay: 5
+      changed_when: FALSE
+~~~
 
 
 Package Installation
