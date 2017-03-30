@@ -195,7 +195,7 @@ Files
 * Copy a file from the Ansible system to the target system:
 ~~~ yaml
     copy:
-      src: files/path/to/file
+      src: path/to/file  # This is relative to the `files` directory that's a sibling of the `tasks` directory we're in.
       dest: /path/to/file
       mode: 0640
       owner: postgresql
