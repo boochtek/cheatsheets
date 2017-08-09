@@ -175,6 +175,13 @@ Package Installation
 Files
 -----
 
+* Ensure a file exists (but don't touch it if it already exists):
+~~~ yaml
+    copy:
+      dest: /path/to/file
+      content: ""
+      force: no
+~~~
 * Create a directory:
 ~~~ yaml
     file:
