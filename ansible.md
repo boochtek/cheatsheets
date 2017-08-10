@@ -25,6 +25,7 @@ ansible-playbook --limit machine_to_run_on playbook.yml
     * Either at the task level, or at the include or dependencies level
     * Makes it easier to run a subset with `-t tag_name`
     * Makes it easier to skip subsets with `--skip-tags tag_name`
+* To start where you left off (if something failed), use the `--start` option, giving the name of a step.
 * Use a more YAML-like format, placing each option on a separate line:
 ~~~ yaml
     - name: Copy file
