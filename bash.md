@@ -58,3 +58,98 @@ NOTES:
 * If your file is normally used as a library, use this instead of just calling `main`:
     * `[[ "$0" == "$BASH_SOURCE" ]] && my_local_main`
     * Also considering passing `"$@"` to `my_local_main`
+
+## Modifying file contents
+
+~~~ bash
+# Uncomment a commented-out line in a file.
+# NOTE: Don't actually use `-i`; it doesn't work in macOS.
+WORDS_IN_LINE='Part of the line to uncomment that will be unique within the file, being careful not to mess up the regex'
+sed -i "/${WORDS_IN_LINE}/s/^#//g" file.txt
+
+# Add a line to the end of a file, only if it's not already in the file.
+LINE_TO_ADD='This line will be added'
+FILE='file.txt'
+grep --silent --line-regexp -F "$LINE_TO_ADD" "$FILE" || \
+    echo "$LINE_TO_ADD" >> "$FILE"
+~~~
+
+## Git post-checkout hook
+
+~~~ bash
+PREVIOUS_HEAD="$1"
+NEW_HEAD="$2"
+NEW_BRANCH="$(git branch --show-current)"
+[[ "$3" == 1 ]] && CHECKOUT_TYPE='branch' || CHECKOUT_TYPE='file'
+
+if [[ "$CHECKOUT_TYPE" == 'branch' ]]; then
+    # Do whatever you want to do when a branch is checked out.
+    # Note that stdout and stderr seemingly get dropped.
+    bundle install
+fi
+~~~
+
+## Prompt
+
+~~~ bash
+# TODO: Check Stack Overflow; shellcheck should also help.
+
+# Read 1 character without waiting for a return.
+read -r -n 1 var_name
+
+# Prompt for a yes/no question, read only 1 character.
+# Return 0 (true) if a `y` or `Y` is entered, otherwise a 1.
+# Adapted from https://stackoverflow.com/a/29436423.
+yes_or_no() {
+    prompt="$*"
+    read -n 1 -p "$prompt [y/n]: " -r -s yn
+    [[ "$yn" == [Yy]* ]] && return 0 || return 1
+}
+yes_or_no 'Continue?' && echo 'continue' || echo 'nope!'
+~~~
+
+## Color
+
+~~~ bash
+ansi() {
+    # Don't output anything unless we're outputting to a terminal on stdout.
+    [[ -t 1 ]] || return
+
+    case "$1" in
+    'black')
+        tput setaf 0
+        ;;
+    'red')
+        tput setaf 1
+        ;;
+    'green')
+        tput setaf 2
+        ;;
+    'yellow')
+        tput setaf 3
+        ;;
+    'blue')
+        tput setaf 4
+        ;;
+    'magenta')
+        tput setaf 5
+        ;;
+    'cyan')
+        tput setaf 6
+        ;;
+    'white')
+        tput setaf 7
+        ;;
+    'bold' | 'bright')
+        tput bold
+        ;;
+    'reset' | 'normal')
+        tput sgr0
+        ;;
+    *)
+        echo default
+        ;;
+    esac
+}
+
+## Other
