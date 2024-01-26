@@ -72,7 +72,16 @@ LINE_TO_ADD='This line will be added'
 FILE='file.txt'
 grep --silent --line-regexp -F "$LINE_TO_ADD" "$FILE" || \
     echo "$LINE_TO_ADD" >> "$FILE"
+
+# Add a line to a file, only if it's not already in the file.
+LINE_TO_ADD='This line will be added'
+AFTER='This line will be before the new line'
+FILE='file.txt'
+grep --silent --line-regexp -F "$LINE_TO_ADD" "$FILE" || \
+    sed -i "/${AFTER}/a ${LINE_TO_ADD}" "$FILE"
 ~~~
+
+
 
 ## Git post-checkout hook
 
@@ -151,5 +160,11 @@ ansi() {
         ;;
     esac
 }
+
+## What process is using a file?
+
+~~~ bash
+lsof -r /path/to/file
+~~~
 
 ## Other
